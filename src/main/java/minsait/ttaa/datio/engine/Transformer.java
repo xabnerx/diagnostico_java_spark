@@ -23,7 +23,9 @@ public class Transformer extends Writer {
         df.printSchema();
 
         df = cleanData(df);
-        df = exampleWindowFunction(df);
+        df = windowFunctionNationalityOverall(df);
+        df = addColumnPotentialVsOverall(df);
+        df = windowFunctionPlayeCatNationalityOverall(df);
         df = columnSelection(df);
 
         // for show 100 records after your transformations and show the Dataset schema
@@ -37,10 +39,17 @@ public class Transformer extends Writer {
     private Dataset<Row> columnSelection(Dataset<Row> df) {
         return df.select(
                 shortName.column(),
-                overall.column(),
+                longName.column(),
+                age.column(),
                 heightCm.column(),
+                weightKg.column(),
+                nationality.column(),
+                clubName.column(),
+                overall.column(),
+                potential.column(),
                 teamPosition.column(),
-                catHeightByPosition.column()
+                playerCat.column(),
+                potentialVsOverall.column()
         );
     }
 
@@ -80,22 +89,50 @@ public class Transformer extends Writer {
      * cat B for if is in 50 players tallest
      * cat C for the rest
      */
-    private Dataset<Row> exampleWindowFunction(Dataset<Row> df) {
+    private Dataset<Row> windowFunctionNationalityOverall(Dataset<Row> df) {
         WindowSpec w = Window
-                .partitionBy(teamPosition.column())
-                .orderBy(heightCm.column().desc());
+                .partitionBy(nationality.column())
+                .orderBy(overall.column().desc());
 
         Column rank = rank().over(w);
 
         Column rule = when(rank.$less(10), "A")
-                .when(rank.$less(50), "B")
-                .otherwise("C");
+                .when(rank.$less(20), "B")
+                .when(rank.$less(50), "C")
+                .otherwise("D");
 
-        df = df.withColumn(catHeightByPosition.getName(), rule);
+        df = df.withColumn(playerCat.getName(), rule);
 
         return df;
     }
+    
+    private Dataset<Row> addColumnPotentialVsOverall(Dataset<Row> df) {
+    		
+        return df.withColumn(potentialVsOverall.getName(), 
+        		col(potential.getName()).divide(col(overall.getName())));
+    }
 
+    
+    private Dataset<Row> windowFunctionPlayeCatNationalityOverall(Dataset<Row> df) {
+       
+    	
+    	
+    	df = df.filter(col(playerCat.getName()).equalTo("A"));
+    	
+		/*
+		 * WindowSpec w = Window .partitionBy(nationality.column());
+		 * 
+		 * 
+		 * Column rank = rank().over(w);
+		 * 
+		 * Column rule = when(rank.$less(10), "A") .when(rank.$less(20), "B")
+		 * .when(rank.$less(50), "C") .otherwise("D");
+		 * 
+		 * df = df.withColumn(nationality.getName(), rule);
+		 */
+
+        return df;
+    }
 
 
 
