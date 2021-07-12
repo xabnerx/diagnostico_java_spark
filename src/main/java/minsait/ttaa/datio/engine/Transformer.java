@@ -8,6 +8,8 @@ import org.apache.spark.sql.expressions.Window;
 import org.apache.spark.sql.expressions.WindowSpec;
 import org.jetbrains.annotations.NotNull;
 
+import minsait.ttaa.common.pathfile.PathFile;
+
 import static minsait.ttaa.datio.common.Common.*;
 import static minsait.ttaa.datio.common.naming.PlayerInput.*;
 import static minsait.ttaa.datio.common.naming.PlayerOutput.*;
@@ -16,10 +18,10 @@ import static org.apache.spark.sql.functions.*;
 public class Transformer extends Writer {
 	private SparkSession spark;
 	
-	public Transformer(@NotNull SparkSession spark,String input,String output) {
+	public Transformer(@NotNull SparkSession spark,PathFile path) {
 		this.spark = spark;
 		
-		Dataset<Row> df = readInput(input);
+		Dataset<Row> df = readInput(path.getInput());
 
 		df.printSchema();
 
@@ -32,7 +34,7 @@ public class Transformer extends Writer {
 		df.show(100, false);
 		// for show 100 records after your transformations and show the Dataset schema
 		df.printSchema();
-		write(df,output);
+		write(df,path.getOutput());
 		
 	}
 

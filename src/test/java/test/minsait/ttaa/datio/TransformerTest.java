@@ -13,7 +13,7 @@ public class TransformerTest implements SparkSessionTestWrapper {
 	public void testTransformer() {
 
 		PathFile path= new PathFile();
-        Transformer engine = new Transformer(spark,path.getInput(),path.getOutput());
+        Transformer engine = new Transformer(spark,path);
       
 		try {
 			assertTrue(true);

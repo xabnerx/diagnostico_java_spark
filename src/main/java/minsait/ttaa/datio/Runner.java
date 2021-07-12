@@ -14,7 +14,7 @@ public class Runner {
 
     public static void main(String[] args) {
     	PathFile path= new PathFile();
-        Transformer engine = new Transformer(spark,path.getInput(),path.getOutput());
+        Transformer engine = new Transformer(spark,path);
       
     }
 }
