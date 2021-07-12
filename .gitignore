@@ -25,3 +25,4 @@ hs_err_pid*
 #IntelliJ IDEA
 /src/test/resources/data/output/
 /.idea/
+/target/
