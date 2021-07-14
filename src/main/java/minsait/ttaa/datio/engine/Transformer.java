@@ -58,7 +58,7 @@ public class Transformer extends Writer {
     /**
      * @return a Dataset readed from csv file
      */
-    private Dataset<Row> readInput() {
+    public Dataset<Row> readInput() {
         Dataset<Row> df = spark.read()
                 .option(HEADER, true)
                 .option(INFER_SCHEMA, true)
@@ -91,7 +91,7 @@ public class Transformer extends Writer {
      * cat B for if is in 50 players tallest
      * cat C for the rest
      */
-    private Dataset<Row> exampleWindowFunction(Dataset<Row> df) {
+    public Dataset<Row> exampleWindowFunction(Dataset<Row> df) {
         WindowSpec w = Window
                 .partitionBy(teamPosition.column())
                 .orderBy(heightCm.column().desc());
@@ -108,7 +108,7 @@ public class Transformer extends Writer {
     }
     
     /* EJERCICIO 2 */
-    private Dataset<Row> rankOverWindow(Dataset<Row> df) {
+    public Dataset<Row> rankOverWindow(Dataset<Row> df) {
         WindowSpec w = Window
                 .partitionBy(nationality.column())
                 .orderBy(overall.column().desc());
@@ -126,7 +126,7 @@ public class Transformer extends Writer {
     }
     
     /* EJERCICIO 3 */
-    private Dataset<Row> potentialVsOverall(Dataset<Row> df) {
+    public Dataset<Row> potentialVsOverall(Dataset<Row> df) {
         Column rule_pvso = df.col("overall").divide(df.col("potential"));
     	
         df = df.withColumn(potentialVsOverall.getName(), rule_pvso);
@@ -135,7 +135,7 @@ public class Transformer extends Writer {
     }
     
     /* EJERCICIO 4 */
-    private Dataset<Row> twoFilters(Dataset<Row> df) {
+    public Dataset<Row> twoFilters(Dataset<Row> df) {
     	Column first = 	df.col("player_cat").equalTo("A");
     	Column second = df.col("player_cat").equalTo("B");
         Column third = 	df.col("player_cat").equalTo("C").and( df.col("po_vs_ov").$greater(1.15) );
